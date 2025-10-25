@@ -1,52 +1,71 @@
-🛒 Retail Sales Performance Analysis using SQL
-🎯 Objective
+# 🛒 SQL Retail Sales Performance Analysis
 
-Analyze retail sales data to uncover sales trends, customer behavior, and category performance using SQL.
-This project demonstrates how structured query analysis can transform transactional data into actionable business insights for decision-making and strategy optimization.
+## 👤 Author
+**Dhanesh Gaikwad**  
+🎓 Master’s in Data Science | RMIT University  
+📍 Melbourne, Australia  
+💼 Data Analyst | SQL • Python • Power BI  
 
-📖 Overview
+---
 
-This project performs an in-depth Exploratory Data Analysis (EDA) of retail sales data using pure SQL.
-It covers database creation, data cleaning, and analytical queries that answer key business questions such as:
+## 🎯 Objective
+Analyze retail sales data to uncover **sales trends, customer behavior, and category performance** using **pure SQL**.  
+The goal is to transform raw transactional data into **actionable business insights** that can guide decision-making, marketing strategy, and operational efficiency.
 
-Which product categories drive the most sales and revenue?
+---
 
-Who are the top customers by total spending?
+## 📖 Overview
+This project performs a complete **Exploratory Data Analysis (EDA)** using SQL only.  
+It involves database creation, data cleaning, data exploration, and detailed business analysis through structured queries.
 
-What are the peak sales months and hours?
+Key questions addressed include:
+- Which **product categories** generate the highest revenue and sales volume?  
+- Who are the **top customers** by spending?  
+- Which **months** and **times of day** achieve peak sales?  
+- How do **age** and **gender** influence buying patterns?  
+- What are the **seasonal trends** and **high-value customer segments**?
 
-How does customer age and gender influence sales patterns?
+---
 
-Which time of day (Morning, Afternoon, Evening) performs best?
+## 🧰 Tech Stack
+| Component | Tool |
+|------------|------|
+| **Language** | SQL |
+| **Database** | PostgreSQL |
+| **Environment** | pgAdmin 4 / VS Code |
+| **Version Control** | Git & GitHub |
+| **Dataset** | Simulated Retail Sales Data (1,997 records) |
 
-By the end, this analysis provides a complete view of the company’s sales dynamics — enabling data-driven marketing, inventory, and operational strategies.
+---
 
-🧰 Tech Stack
+## 🏗️ Step 1: Database & Table Setup
+```sql
+CREATE DATABASE SQL_Project;
 
-Language: SQL
-Database: PostgreSQL / MySQL
-Tools: VS Code, DBeaver, pgAdmin
-Version Control: Git & GitHub
+DROP TABLE IF EXISTS retail_sales;
+CREATE TABLE retail_sales (
+    transaction_id INT PRIMARY KEY,
+    sale_date DATE,
+    sale_time TIME,
+    customer_id INT,
+    gender VARCHAR(15),
+    age INT,
+    category VARCHAR(15),
+    quantity INT,
+    price_per_unit FLOAT,
+    cogs FLOAT,
+    total_sale FLOAT
+);
+```
+✅ **Result:** Database and table successfully created.
 
-🗂️ Database Schema
-📋 Table: retail_sales
-Column	Type	Description
-transaction_id	INT	Unique transaction ID (Primary Key)
-sale_date	DATE	Date of the transaction
-sale_time	TIME	Time of the transaction
-customer_id	INT	Unique customer ID
-gender	VARCHAR(15)	Gender of the customer
-age	INT	Age of the customer
-category	VARCHAR(15)	Product category (Clothing, Beauty, Electronics, etc.)
-quantity	INT	Quantity purchased
-price_per_unit	FLOAT	Price per item
-cogs	FLOAT	Cost of goods sold
-total_sale	FLOAT	Total sales value per transaction
-🧹 Data Cleaning
+---
 
-Before analysis, all missing or invalid data was removed to ensure consistency and accuracy.
+## 🧹 Step 2: Data Cleaning
+Check for missing values and remove invalid records.
 
-DELETE FROM retail_sales
+```sql
+SELECT * FROM retail_sales
 WHERE transaction_id IS NULL
    OR sale_date IS NULL
    OR sale_time IS NULL
@@ -55,119 +74,192 @@ WHERE transaction_id IS NULL
    OR quantity IS NULL
    OR cogs IS NULL
    OR total_sale IS NULL;
+```
+🧾 **Result:** 0 rows returned → dataset is clean.  
+✅ No missing or null values found across any field.
 
+---
 
-✅ Result: A clean dataset ready for analysis.
+## 📊 Step 3: Data Exploration
 
-🔍 Data Exploration
--- Total number of records
-SELECT COUNT(*) AS total_transactions FROM retail_sales;
+### Total Transactions
+```sql
+SELECT COUNT(*) AS total_sales FROM retail_sales;
+```
+**Result:** 1,997 transactions
 
--- Total number of unique customers
+### Unique Customers
+```sql
 SELECT COUNT(DISTINCT customer_id) AS unique_customers FROM retail_sales;
+```
+**Result:** 149 (Clothing), 141 (Beauty), 144 (Electronics)
 
--- Product categories
+### Product Categories
+```sql
 SELECT DISTINCT category FROM retail_sales;
+```
+**Result:** `Clothing`, `Beauty`, `Electronics`
 
-📊 Business Analysis & Insights
-🧾 1. Daily Sales Performance
-SELECT * 
-FROM retail_sales 
-WHERE sale_date = '2022-11-05';
+✅ Dataset is well-structured and balanced across product categories.
 
+---
 
-📈 Insight: Tracks sales on specific dates for validation or reporting.
+## 💼 Step 4: Business Questions & Analysis
 
-👕 2. Clothing Sales in November 2022
-SELECT * 
-FROM retail_sales
+## Q1. 🧾 Sales on 2022-11-05
+```sql
+SELECT * FROM retail_sales WHERE sale_date = '2022-11-05';
+```
+**Result:** 11 transactions  
+**Insight:**  
+Sales were recorded across all categories and genders — normal day-to-day activity, showing steady customer engagement.
+
+---
+
+## Q2. 👕 Bulk Clothing Purchases in November 2022
+```sql
+SELECT * FROM retail_sales
 WHERE category = 'Clothing'
   AND TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
   AND quantity > 4;
+```
+**Result:** 17 transactions  
+**Insight:**  
+Bulk clothing sales spiked in November — possibly due to **festive or seasonal demand**.  
+Customers aged **19–61** show strong interest in clothing during this period.
 
+---
 
-💡 Insight: Identifies bulk purchases and high-performing months.
-
-💰 3. Total Revenue by Category
-SELECT 
-    category,
-    SUM(total_sale) AS total_revenue,
-    COUNT(*) AS total_orders
+## Q3. 💰 Total Revenue & Orders per Category
+```sql
+SELECT category,
+       SUM(total_sale) AS total_revenue,
+       COUNT(*) AS total_orders
 FROM retail_sales
 GROUP BY category;
+```
+| Category | Total Revenue | Total Orders |
+|-----------|---------------|--------------|
+| Electronics | 313,810 | 684 |
+| Clothing | 311,070 | 701 |
+| Beauty | 286,840 | 612 |
 
+**Insight:**  
+- *Electronics* yields the **highest revenue**.  
+- *Clothing* leads in **number of transactions**.  
+- *Beauty* performs consistently but slightly lower.
 
-📊 Insight: Determines which categories contribute most to total revenue.
+---
 
-💄 4. Average Age of Customers in Beauty Category
+## Q4. 💄 Average Age of Beauty Buyers
+```sql
 SELECT ROUND(AVG(age), 2) AS avg_age
 FROM retail_sales
 WHERE category = 'Beauty';
+```
+**Result:** `40.42 years`  
+**Insight:**  
+The average Beauty buyer is **around 40 years old**, suggesting that middle-aged customers are the main audience for self-care and cosmetics products.
 
+---
 
-🧍 Insight: Identifies age demographics for targeted marketing.
+## Q5. 💎 High-Value Transactions (Total Sale > 1000)
+```sql
+SELECT * FROM retail_sales WHERE total_sale > 1000;
+```
+**Result:** 306 transactions  
+**Insight:**  
+About **15% of all transactions** are high-value, primarily from Clothing and Beauty.  
+These premium purchases are perfect for **loyalty or VIP marketing programs**.
 
-💎 5. High-Value Transactions (> 1000)
-SELECT * 
-FROM retail_sales
-WHERE total_sale > 1000;
+---
 
-
-💰 Insight: Detects premium purchases for loyalty segmentation.
-
-👩‍🦰 6. Gender-wise Transactions per Category
-SELECT 
-    category,
-    gender,
-    COUNT(*) AS total_transactions
+## Q6. 👩‍🦰 Gender-wise Transactions by Category
+```sql
+SELECT category, gender, COUNT(*) AS total_transactions
 FROM retail_sales
 GROUP BY category, gender
 ORDER BY category;
+```
+| Category | Female | Male |
+|-----------|---------|------|
+| Beauty | 330 | 282 |
+| Clothing | 347 | 354 |
+| Electronics | 340 | 344 |
 
+**Insight:**  
+- *Beauty* is female-dominated.  
+- *Clothing* and *Electronics* show **balanced participation** across genders.  
+📈 Campaigns can be personalized by category demographics.
 
-📈 Insight: Understands gender-based buying patterns.
+---
 
-📅 7. Best-Selling Month Each Year
-SELECT 
-    year, month, avg_sale
+## Q7. 📅 Best-Selling Month Each Year
+```sql
+SELECT year, month, avg_sale
 FROM (
-    SELECT 
-        EXTRACT(YEAR FROM sale_date) AS year,
-        EXTRACT(MONTH FROM sale_date) AS month,
-        AVG(total_sale) AS avg_sale,
-        RANK() OVER (PARTITION BY EXTRACT(YEAR FROM sale_date)
-                     ORDER BY AVG(total_sale) DESC) AS rank
-    FROM retail_sales
-    GROUP BY 1, 2
+  SELECT EXTRACT(YEAR FROM sale_date) AS year,
+         EXTRACT(MONTH FROM sale_date) AS month,
+         AVG(total_sale) AS avg_sale,
+         RANK() OVER (PARTITION BY EXTRACT(YEAR FROM sale_date)
+                      ORDER BY AVG(total_sale) DESC) AS rank
+  FROM retail_sales
+  GROUP BY 1, 2
 ) ranked_sales
 WHERE rank = 1;
+```
+| Year | Month | Avg Sale |
+|------|--------|-----------|
+| 2022 | July (7) | 541.34 |
+| 2023 | February (2) | 535.53 |
 
+**Insight:**  
+Peak sales occur in **July and February**, likely due to **mid-year and early-year discount seasons**.
 
-🗓️ Insight: Highlights seasonal trends for inventory planning.
+---
 
-🏆 8. Top 5 Customers by Total Sales
-SELECT 
-    customer_id,
-    SUM(total_sale) AS total_sales
+## Q8. 🏆 Top 5 Customers by Total Spending
+```sql
+SELECT customer_id,
+       SUM(total_sale) AS total_sales
 FROM retail_sales
 GROUP BY customer_id
 ORDER BY total_sales DESC
 LIMIT 5;
+```
+| Customer ID | Total Sales |
+|--------------|-------------|
+| 3 | 38,440 |
+| 1 | 30,750 |
+| 5 | 30,405 |
+| 2 | 25,295 |
+| 4 | 23,580 |
 
+**Insight:**  
+Top 5 customers generate a significant portion of total revenue — key targets for **retention and VIP loyalty programs**.
 
-🎯 Insight: Identifies top-spending customers for loyalty programs.
+---
 
-👥 9. Unique Customers per Product Category
-SELECT 
-    category,
-    COUNT(DISTINCT customer_id) AS unique_customers
+## Q9. 👥 Unique Customers per Category
+```sql
+SELECT category,
+       COUNT(DISTINCT customer_id) AS unique_customers
 FROM retail_sales
 GROUP BY category;
+```
+| Category | Unique Customers |
+|-----------|------------------|
+| Beauty | 141 |
+| Clothing | 149 |
+| Electronics | 144 |
 
+**Insight:**  
+Customer distribution across categories is well-balanced — showing healthy interest across all retail segments.
 
-🧩 Insight: Evaluates category popularity among different buyers.
+---
 
-⏰ 10. Orders by Time of Day
+## Q10. ⏰ Orders by Time of Day
+```sql
 WITH hourly_sales AS (
     SELECT *,
            CASE
@@ -177,64 +269,71 @@ WITH hourly_sales AS (
            END AS shift
     FROM retail_sales
 )
-SELECT 
-    shift,
-    COUNT(*) AS total_orders
+SELECT shift, COUNT(*) AS total_orders
 FROM hourly_sales
 GROUP BY shift;
+```
+| Shift | Total Orders |
+|--------|---------------|
+| Evening | 1,062 |
+| Morning | 558 |
+| Afternoon | 377 |
+
+**Insight:**  
+🌆 **Evening sales dominate**, making up over half of all transactions.  
+Promotions and staffing can be optimized for peak evening hours.
+
+---
+
+## 📈 Key Business Insights
+
+| # | Finding | Business Impact |
+|---|----------|-----------------|
+| 1 | Electronics leads in revenue | Maintain high stock & margin strategy |
+| 2 | Clothing leads in transaction volume | Prioritize promotions and offers |
+| 3 | Beauty buyers average ~40 years | Target middle-aged audience |
+| 4 | Evening sales dominate | Align operations & offers accordingly |
+| 5 | July & February are peak months | Schedule major marketing events |
+| 6 | Top 5 customers are high-value spenders | Create VIP engagement programs |
+
+---
+
+## 🧠 Skills Demonstrated
+- SQL Data Cleaning & EDA  
+- Aggregation Functions (`SUM`, `AVG`, `COUNT`)  
+- Ranking & Window Functions (`RANK()`, `PARTITION BY`)  
+- Common Table Expressions (CTEs)  
+- Business Intelligence & Insight Generation  
+- Markdown Documentation for Analytics Projects  
+
+---
+
+## 🚀 How to Run This Project
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dhanesh456/Retail-Sales-Insights-SQL.git
+   ```
+2. Open **pgAdmin** or **VS Code SQL extension**.  
+3. Execute the SQL script (`Query.sql`) step-by-step.  
+4. Review each section (Cleaning → Exploration → Analysis).  
+5. View query results and interpret using insights provided in this README.
+
+---
+
+## ⭐ Summary
+This project transforms raw retail sales data into actionable insights through **SQL-based analysis**.  
+It identifies **top-performing categories**, **customer demographics**, **sales patterns**, and **seasonal trends** that can guide **data-driven business decisions**.
+
+If you found this project useful, please ⭐ star the repository and connect with me on [LinkedIn](https://www.linkedin.com/in/dhanesh456)! 🙌
 
 
-🌞 Insight: Afternoon and Evening are peak periods — helpful for staffing decisions.
+---
 
-📈 Key Findings
-#	Finding	Business Impact
-1	Clothing & Beauty categories generate highest revenue	Focus marketing on these verticals
-2	Afternoon & Evening sales dominate	Optimize staffing and offers for these hours
-3	Average buyer age differs by category	Enables precise customer segmentation
-4	November & July show highest sales	Align promotions and stock with peak months
-5	Top 5 customers contribute large revenue share	Build customer loyalty or VIP programs
-🧠 Skills Demonstrated
-
-SQL Data Cleaning & EDA
-
-Aggregation Functions (SUM, AVG, COUNT)
-
-Ranking & Window Functions (RANK(), PARTITION BY)
-
-Common Table Expressions (CTEs)
-
-Business Insight Generation
-
-Markdown Documentation
-
-🚀 How to Run This Project
-
-Clone this repository
-
-git clone https://github.com/dhanesh456/Retail-Sales-Insights-SQL.git
-
-
-Open your SQL environment (VS Code / DBeaver / pgAdmin)
-
-Create and load the database using the provided SQL script
-
-Run queries section-wise to reproduce all insights
-
-👨‍💻 Author
-
-Dhanesh Gaikwad
-📍 Melbourne, Australia
-🎓 Master’s in Data Science | RMIT University
-💼 Data Analyst | SQL • Python • Power BI
-
-🔗 LinkedIn
-
-💻 GitHub
-
-⭐ Summary
-
-This project is part of my Data Analyst Portfolio, demonstrating my ability to apply SQL for data cleaning, EDA, and business-driven analytics.
-It transforms raw retail data into strategic insights that can optimize marketing, staffing, and inventory operations.
-
-If you found this project useful, please ⭐ star the repo or connect with me on LinkedIn
-! 😊
+## 🧰 Tech Stack
+| Component | Tool |
+|------------|------|
+| **Language** | SQL |
+| **Database** | PostgreSQL |
+| **Environment** | pgAdmin 4 / VS Code |
+| **Version Control** | Git & GitHub |
+| **Dataset** | Simulated Retail Sales Data (1,997 records) |
