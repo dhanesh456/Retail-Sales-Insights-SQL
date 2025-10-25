@@ -308,32 +308,7 @@ Promotions and staffing can be optimized for peak evening hours.
 
 ---
 
-## 🚀 How to Run This Project
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/dhanesh456/Retail-Sales-Insights-SQL.git
-   ```
-2. Open **pgAdmin** or **VS Code SQL extension**.  
-3. Execute the SQL script (`Query.sql`) step-by-step.  
-4. Review each section (Cleaning → Exploration → Analysis).  
-5. View query results and interpret using insights provided in this README.
-
----
-
 ## ⭐ Summary
 This project transforms raw retail sales data into actionable insights through **SQL-based analysis**.  
 It identifies **top-performing categories**, **customer demographics**, **sales patterns**, and **seasonal trends** that can guide **data-driven business decisions**.
 
-If you found this project useful, please ⭐ star the repository and connect with me on [LinkedIn](https://www.linkedin.com/in/dhanesh456)! 🙌
-
-
----
-
-## 🧰 Tech Stack
-| Component | Tool |
-|------------|------|
-| **Language** | SQL |
-| **Database** | PostgreSQL |
-| **Environment** | pgAdmin 4 / VS Code |
-| **Version Control** | Git & GitHub |
-| **Dataset** | Simulated Retail Sales Data (1,997 records) |
